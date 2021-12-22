@@ -1,0 +1,105 @@
+﻿<Window x:Class="WpfApp2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2"
+        xmlns:local1="clr-namespace:WpfApp2.ViewModel"
+        
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib" 
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" xmlns:e="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:behaviours="clr-namespace:WpfApp2.ViewModel"
+        mc:Ignorable="d"
+        Title="ТТИиП" Height="450" Width="800" SizeToContent="Manual" x:Name="main">
+    <Window.Resources>
+        <ResourceDictionary Source="StyleButtonResurs.xaml"/>
+
+    </Window.Resources>
+    <Grid x:Name="grid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20*" MaxHeight="20" MinHeight="20"/>
+            <RowDefinition Height="7*"/>
+            <RowDefinition MaxHeight="30" MinHeight="30" Height="32*"/>
+            <RowDefinition Height="353*"/>
+            <RowDefinition Height="20*" MaxHeight="20" MinHeight="20"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="125*" MaxWidth="250" MinWidth="250" />
+            <ColumnDefinition Width="218*" MinWidth="100"/>
+            <ColumnDefinition Width="19*"/>
+            <ColumnDefinition Width="38*"/>
+        </Grid.ColumnDefinitions>
+
+        <TreeView Focusable="True" Margin="0,0,10,0" x:Name="treeView" Background="{Binding ElementName=LabelState, Path=Background}" Grid.Column="0" Grid.RowSpan="4" BorderBrush="{x:Null}" BorderThickness="0" Foreground="White" FontWeight="Bold" >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding LoadInformationCommand}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseUp">
+                    <i:InvokeCommandAction Command="{Binding LoadTable}"
+                                   CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding ListStr}">
+                    <Button Focusable="True" BorderThickness="0" Background="#FFFF8354" Template="{StaticResource ButtonTemplateCheckBox}" Content="{Binding Group}" Foreground="White" FontWeight="Bold">
+                    </Button>
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate>
+                            <Label x:Name="TreeLabel" Focusable="True" Padding="2" BorderThickness="0" Background="#FFFF8354" Template="{StaticResource MainLabelTemplate}" Content="{Binding Name}" Foreground="White" FontWeight="Bold">
+                            </Label>
+                        </DataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            <TreeView.Effect>
+                <DropShadowEffect Opacity="0.3" RenderingBias="Performance" ShadowDepth="2" Direction="0" BlurRadius="10"/>
+            </TreeView.Effect>
+        </TreeView>
+        <Rectangle Fill="White" Grid.Column="1" Grid.RowSpan="5" Grid.ColumnSpan="3" Margin="0,20,0,0"/>
+        <Label x:Name="LabelState" Template="{StaticResource LabelTemplate}" Background="#FFFF8350" Grid.Column="1" Grid.Row="0" Content="{Binding Path=Status}" Foreground="White" FontWeight="Bold" FontStyle="Normal" FontFamily="Consolas" ToolTip="{Binding ToolTip}" BorderThickness="0,0,0,0" BorderBrush="White" Margin="0,0,9,0" Grid.ColumnSpan="3">
+            <Label.Effect>
+                <DropShadowEffect Opacity="0.3" RenderingBias="Performance" ShadowDepth="2" Direction="-90" BlurRadius="10"/>
+            </Label.Effect>
+        </Label>
+        <Button Margin="0,2,10,0" x:Name="buttonSettings" Template="{StaticResource ButtonTemplate}" Content="Settings" Grid.Row="4" Grid.Column="0" FontFamily="Consolas" FontSize="13" Background="#FFFF8354" BorderBrush="White" BorderThickness="0,0,0,0" Foreground="White" FontWeight="Bold">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <i:InvokeCommandAction Command="{Binding Open}" CommandParameter="WindowSettings" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.3" RenderingBias="Performance" ShadowDepth="3" Direction="0" BlurRadius="9.7"/>
+            </Button.Effect>
+        </Button>
+
+        <FlowDocumentPageViewer Document="{Binding FlowDocument}" FontFamily="Consolas" x:Name="flowDirect" Grid.Row="3" HorizontalContentAlignment="Center" Margin="0,10,0,0" Grid.Column="1" Grid.ColumnSpan="3"/>
+
+        <TextBox Text="{Binding Placeholder}" FontFamily="Consolas" BorderThickness="2" x:Name="searchBox" Background="White" Template="{StaticResource TextBoxTemplateSearch}" Margin="117,0,5,0" Grid.Column="1" Grid.Row="2" FontWeight="Bold" CaretBrush="#FFFF8354" SelectionBrush="#FFFF8354" SelectionTextBrush="#FFFF8354">
+            <TextBox.BorderBrush>
+                <SolidColorBrush Color="{DynamicResource BorderOrange}" />
+            </TextBox.BorderBrush>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="LostFocus">
+                    <i:InvokeCommandAction Command="{Binding PlaceholderOn}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="GotFocus">
+                    <i:InvokeCommandAction Command="{Binding PlaceholderOff}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </TextBox>
+
+        <Button Style="{StaticResource StyleSearch}" Template="{StaticResource ButtonTemplateSearch}" Grid.Column="2" Grid.Row="2" BorderThickness="0" Panel.ZIndex="100" Height="Auto" Margin="0,0,0,0">
+            <Image Source="icon\search.png" />
+            <Button.Background>
+                <SolidColorBrush Color="{DynamicResource BorderOrange}"/>
+            </Button.Background>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="GotFocus">
+                    <i:InvokeCommandAction Command="{Binding Search}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Button>
+
+    </Grid>
+</Window>
